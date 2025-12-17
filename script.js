@@ -14,69 +14,55 @@ userSection.addEventListener("click", (event) => {
 });
 
 function createUser() {
-    let request = new XMLHttpRequest();
-    request.open("GET", `https://jsonplaceholder.typicode.com/posts`);
-    request.responseType = 'json';
-    request.send();
-    request.onload = function () {
-        if (request.status >= 200 && request.status < 300) {
-            let response = request.response;
-            response.forEach(user => {
-                if (!userArr.includes(user.userId)) {
-                    userArr.push(user.userId);
-                }
-            })
-            userSection.innerHTML = "";
-            userArr.forEach(user => {
-                let li = document.createElement("li"),
-                    profile = document.createElement("div"),
-                    icon = document.createElement("i"),
-                    infoSection = document.createElement("div"),
-                    userName = document.createElement("h3"),
-                    userMail = document.createElement("p");
-                let userNameText = document.createTextNode(`@userid${user}`),
-                    userMaillText = document.createTextNode(`userid${user}@mail.com`);
-                li.dataset.idToSelect = user;
-                profile.className = "icon";
-                icon.className = "hgi hgi-stroke hgi-user";
-                profile.appendChild(icon);
-                userName.appendChild(userNameText);
-                userMail.appendChild(userMaillText);
-                infoSection.appendChild(userName);
-                infoSection.appendChild(userMail);
-                li.appendChild(profile);
-                li.appendChild(infoSection);
-                userSection.appendChild(li);
-            });
-        }
-    }
+    fetch("https://jsonplaceholder.typicode.com/users")
+    .then((result) => result.json())
+    .then((data) => {
+        userSection.innerHTML = "";
+        data.forEach(user => {
+            let li = document.createElement("li"),
+                profile = document.createElement("div"),
+                icon = document.createElement("i"),
+                infoSection = document.createElement("div"),
+                userName = document.createElement("h3"),
+                userMail = document.createElement("p");
+            let userNameText = document.createTextNode(`@${user.username}`),
+                userMaillText = document.createTextNode(user.email);
+            li.dataset.idToSelect = user.id;
+            profile.className = "icon";
+            icon.className = "hgi hgi-stroke hgi-user";
+            profile.appendChild(icon);
+            userName.appendChild(userNameText);
+            userMail.appendChild(userMaillText);
+            infoSection.appendChild(userName);
+            infoSection.appendChild(userMail);
+            li.appendChild(profile);
+            li.appendChild(infoSection);
+            userSection.appendChild(li);
+        });
+    })
+    .catch(() => alert("Error: someting is wrroing in API requser"));
 }
 
 function createPost() {
-    let request = new XMLHttpRequest();
-    request.open("GET", `https://jsonplaceholder.typicode.com/posts?userId=${userIdSelect}`);
-    request.responseType = 'json';
-    request.send();
-    request.onload = function () {
-        if (request.status >= 200 && request.status < 300) {
-            let response = request.response;
-            postSection.innerHTML = "";
-            response.forEach(post => {
-                let box = document.createElement("div"),
-                    h3 = document.createElement("h3"),
-                    pragraph = document.createElement("p");
-                let title = document.createTextNode(post.title),
-                    body = document.createTextNode(post.body);
-                box.className = "box";
-                h3.appendChild(title);
-                pragraph.appendChild(body);
-                box.appendChild(h3);
-                box.appendChild(pragraph);
-                postSection.appendChild(box);
-            });
-        }
-    }
+    fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userIdSelect}`)
+    .then((result) => result.json())
+    .then((data) => {
+        postSection.innerHTML = "";
+        data.forEach(post => {
+            let box = document.createElement("div"),
+                h3 = document.createElement("h3"),
+                pragraph = document.createElement("p");
+            let title = document.createTextNode(post.title),
+                body = document.createTextNode(post.body);
+            box.className = "box";
+            h3.appendChild(title);
+            pragraph.appendChild(body);
+            box.appendChild(h3);
+            box.appendChild(pragraph);
+            postSection.appendChild(box);
+        });
+    })
+    .catch(() => alert("Error: someting is wrroing in API requser"));
 }
 
-createPost();
 createUser();
